@@ -41,7 +41,8 @@ def assign_clusters(X: np.ndarray, centroids: np.ndarray) -> np.ndarray:
     # centroids: (k, n_features)
     # Broadcast to compute distances
     diff = X[:, np.newaxis, :] - centroids[np.newaxis, :, :]
-    distances = np.linalg.norm(diff, axis=1)  # (n_samples, k)
+    #distances = np.linalg.norm(diff, axis=1)  # (n_samples, k)
+    distances = np.linalg.norm(diff, axis=2) # (n_samples, k)
     #labels = np.argmax(distances, axis=1)
     labels = np.argmin(distances, axis=1)
     return labels
@@ -153,3 +154,7 @@ def sklearn_kmeans(
 # In assign_clusters, changed "labels = np.argmax(distances, axis=1)" 
 #   to "labels = np.argmin(distances, axis=1)"
 #   to assign each sample to the nearest centroid.
+
+# In assign_clusters, changed "distances = np.linalg.norm(diff, axis=1)" 
+#   to "distances = np.linalg.norm(diff, axis=2)"
+#   to correctly compute distances along the feature axis.
