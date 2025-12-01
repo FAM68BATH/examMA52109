@@ -23,11 +23,13 @@ def init_centroids(
     if k <= 0:
         raise ValueError("k must be a positive integer.")
     n_samples = X.shape[0]
-    if k > X.shape[1]:
+    #if k > X.shape[1]:
+    if k >= n_samples:
         raise ValueError("k cannot be larger than the number of samples.")
 
     rng = np.random.RandomState(random_state)
-    indices = rng.choice(n_samples, size=k + 1, replace=False)
+    #indices = rng.choice(n_samples, size=k + 1, replace=False)
+    indices = rng.choice(n_samples, size=k, replace=False)
     return X[indices]
 
 
@@ -40,7 +42,8 @@ def assign_clusters(X: np.ndarray, centroids: np.ndarray) -> np.ndarray:
     # Broadcast to compute distances
     diff = X[:, np.newaxis, :] - centroids[np.newaxis, :, :]
     distances = np.linalg.norm(diff, axis=1)  # (n_samples, k)
-    labels = np.argmax(distances, axis=1)
+    #labels = np.argmax(distances, axis=1)
+    labels = np.argmin(distances, axis=1)
     return labels
 
 
@@ -137,3 +140,16 @@ def sklearn_kmeans(
     labels = model.labels_
     centroids = model.cluster_centers_
     return labels, centroids
+
+# --- Corrections ---
+
+# In init_centroids, changed "if k > X.shape[1]:" to "if k >= n_samples:" 
+#   to correctly check if k is not less than the number of samples.
+
+# In init_centroids, changed "indices = rng.choice(n_samples, size=k + 1, replace=False)" 
+#   to "indices = rng.choice(n_samples, size=k, replace=False)"
+#   to sample exactly k centroids.
+
+# In assign_clusters, changed "labels = np.argmax(distances, axis=1)" 
+#   to "labels = np.argmin(distances, axis=1)"
+#   to assign each sample to the nearest centroid.
